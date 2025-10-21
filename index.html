@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Website</title>
+<style>
+  body {
+    background-color: pink;
+    font-family: "Comic Sans MS", cursive;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  #container {
+    margin-top: 100px;
+    position: relative;
+    z-index: 2;
+  }
+  input, button {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+  }
+  button {
+    background-color: white;
+    color: hotpink;
+    cursor: pointer;
+  }
+  .emoji {
+    font-size: 2em;
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <h1>Hello Miss PMO 💅</h1>
+  <p>Kindly confirm your name in the box below 👇</p>
+  <input type="text" id="nameBox" placeholder="Enter your name" />
+  <br><br>
+  <button onclick="page2()">Next ➡️</button>
+</div>
+
+<audio id="bdayMusic" src="DIVINE - Baazigar feat. Armani White  Prod. by Karan Kanchan  Official Music Video.mp3"></audio>
+<canvas id="partyCanvas"></canvas>
+
+<script>
+const container = document.getElementById("container");
+const audio = document.getElementById("bdayMusic");
+const canvas = document.getElementById("partyCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confetti = [];
+let fireworks = [];
+let balloons = [];
+let animationInterval;
+
+// ---------- PAGE 1 ----------
+function page2() {
+  const name = document.getElementById("nameBox").value;
+  localStorage.setItem("username", name);
+  container.innerHTML = `
+    <h1>Now enter your date of birth 🎂</h1>
+    <input type="date" id="dob">
+    <br><br>
+    <button onclick="page3()">Next ➡️</button>
+  `;
+}
+
+// ---------- PAGE 2 ----------
+function page3() {
+  const dob = document.getElementById("dob").value;
+  localStorage.setItem("dob", dob);
+  document.body.style.backgroundColor = "black";
+  container.innerHTML = `
+    <h1>IT’S TIME?? 🎉🎈 HAPPY BIRTHDAY ESHA 🎊</h1>
+    <div class="emoji">🎈🎉🎂🎊✨🎁🥳</div>
+    <br><br>
+    <button onclick="page4()">Next ➡️</button>
+  `;
+  startParty();
+  playMusic();
+}
+
+// ---------- PAGE 3 ----------
+function page4() {
+  stopParty();
+  stopMusic();
+  document.body.style.backgroundColor = "pink";
+  container.innerHTML = `
+    <h1>Shayla, you are growing 🌸</h1>
+    <p>I hope you achieve all that you prayed for and even what you forgot to pray for 💫<br>
+    May this year make all your worries go away and may your delulus come trululu bestie 💕</p>
+    <div class="emoji">🎉🎂💖🌟🥳💐🎀</div>
+    <p>And stop being PMO now 😤😤 you old 😡😡😡</p>
+  `;
+}
+
+// ---------- MUSIC ----------
+function playMusic() {
+  audio.currentTime = 50;
+  audio.play().catch(() => {});
+}
+function stopMusic() {
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+// ---------- PARTY ANIMATIONS ----------
+function startParty() {
+  confetti = [];
+  fireworks = [];
+  balloons = [];
+  for (let i = 0; i < 150; i++) {
+    confetti.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 6 + 2,
+      d: Math.random() * 1 + 0.5,
+    });
+  }
+  for (let i = 0; i < 20; i++) {
+    balloons.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 200,
+      r: 25 + Math.random() * 20,
+      color: randomColor(),
+      speed: 1 + Math.random() * 2,
+    });
+  }
+  animationInterval = setInterval(drawScene, 30);
+  setInterval(createFirework, 1000);
+}
+
+function stopParty() {
+  clearInterval(animationInterval);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawScene() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawConfetti();
+  drawFireworks();
+  drawBalloons();
+}
+
+function drawConfetti() {
+  ctx.fillStyle = "white";
+  confetti.forEach((c) => {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.fill();
+    c.y += c.d;
+    if (c.y > canvas.height) c.y = 0;
+  });
+}
+
+function createFirework() {
+  const colors = ["#ff0000", "#ffcc00", "#00ffcc", "#ff66ff", "#66ff66", "#3399ff"];
+  fireworks.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * (canvas.height / 2),
+    color: colors[Math.floor(Math.random() * colors.length)],
+    radius: 1,
+    max: 80,
+  });
+}
+
+function drawFireworks() {
+  for (let i = 0; i < fireworks.length; i++) {
+    const f = fireworks[i];
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = f.color;
+    ctx.stroke();
+    f.radius += 3;
+    if (f.radius > f.max) fireworks.splice(i, 1);
+  }
+}
+
+function drawBalloons() {
+  balloons.forEach((b) => {
+    ctx.beginPath();
+    ctx.ellipse(b.x, b.y, b.r * 0.8, b.r, 0, 0, 2 * Math.PI);
+    ctx.fillStyle = b.color;
+    ctx.fill();
+    b.y -= b.speed;
+    if (b.y + b.r < 0) {
+      b.y = canvas.height + Math.random() * 100;
+      b.x = Math.random() * canvas.width;
+    }
+  });
+}
+
+function randomColor() {
+  const colors = ["#ff6b6b", "#feca57", "#48dbfb", "#5f27cd", "#1dd1a1", "#ff9ff3"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+</script>
+</body>
+</html>

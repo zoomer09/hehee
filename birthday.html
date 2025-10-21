@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  color: white;
+  font-family: "Comic Sans MS", cursive;
+  text-align: center;
+}
+h1 {
+  margin-top: 100px;
+}
+button {
+  background-color: white;
+  color: hotpink;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+</style>
+</head>
+<body>
+  <h1>IT’S TIME?? 🎉🎈 HAPPY BIRTHDAY ESHA 🎊</h1>
+  <div>🎂🎉🎈🎊✨🎁🥳</div>
+  <br><br>
+  <button onclick="nextPage()">Next ➡️</button>
+
+  <audio id="bdayMusic" src="DIVINE - Baazigar feat. Armani White  Prod. by Karan Kanchan  Official Music Video.mp3"></audio>
+  <canvas id="partyCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("partyCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let fireworks = [];
+let balloons = [];
+
+// 🎈 Balloons
+function createBalloons(){
+  for (let i = 0; i < 25; i++){
+    balloons.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + Math.random() * 200,
+      r: 20 + Math.random() * 20,
+      color: randomColor(),
+      speed: 1 + Math.random() * 2
+    });
+  }
+}
+
+// 🎆 Fireworks
+function createFirework(){
+  fireworks.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * (canvas.height / 2),
+    radius: 1,
+    color: randomColor(),
+    max: 80
+  });
+}
+
+function drawFireworks(){
+  for (let i = 0; i < fireworks.length; i++){
+    const f = fireworks[i];
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = f.color;
+    ctx.stroke();
+    f.radius += 3;
+    if (f.radius > f.max) fireworks.splice(i, 1);
+  }
+}
+
+function drawBalloons(){
+  for (let b of balloons){
+    ctx.beginPath();
+    ctx.ellipse(b.x, b.y, b.r * 0.8, b.r, 0, 0, 2 * Math.PI);
+    ctx.fillStyle = b.color;
+    ctx.fill();
+    b.y -= b.speed;
+    if (b.y + b.r < 0){
+      b.y = canvas.height + Math.random() * 100;
+      b.x = Math.random() * canvas.width;
+    }
+  }
+}
+
+function randomColor(){
+  const colors = ["#ff6b6b","#feca57","#48dbfb","#5f27cd","#1dd1a1","#ff9ff3"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function drawScene(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawBalloons();
+  drawFireworks();
+}
+
+createBalloons();
+setInterval(drawScene, 30);
+setInterval(createFirework, 1000);
+
+// 🎵 Music
+function playMusic(){
+  const audio = document.getElementById("bdayMusic");
+  if(localStorage.getItem("playMusic") === "true"){
+    audio.currentTime = 50;
+    audio.play().catch(()=>{});
+    localStorage.removeItem("playMusic");
+  }
+}
+playMusic();
+
+// 🩷 Next
+function nextPage(){
+  const audio = document.getElementById("bdayMusic");
+  audio.pause();
+  audio.currentTime = 0;
+  window.location.href = "message.html";
+}
+</script>
+</body>
+</html>
